@@ -52,7 +52,9 @@ def show_all_pokemons(request):
         else:
             pokemons_on_page.append({
                 'pokemon_id': pokemon_entity.pokemon.id,
-                'img_url': pokemon_entity.pokemon.image.url,
+                'img_url': request.build_absolute_uri(
+                    pokemon_entity.pokemon.image.url
+                ),
                 'title_ru': pokemon_entity.pokemon.title,
             })
 
@@ -78,15 +80,24 @@ def show_pokemon(request, pokemon_id):
         )
 
     pokemon_card = {
-        "pokemon_id": pokemon.id,
-        "title_ru": pokemon.title,
-        "title_en": pokemon.title_en,
-        "title_jp": pokemon.title_jp,
-        "description": pokemon.description,
-        "img_url": request.build_absolute_uri(pokemon.image.url),
-        "next_evolution": {},
-        "previous_evolution": {},
-    }
+            "pokemon_id": pokemon.id,
+            "title_ru": pokemon.title,
+            "title_en": pokemon.title_en,
+            "title_jp": pokemon.title_jp,
+            "description": pokemon.description,
+            "img_url": request.build_absolute_uri(pokemon.image.url),
+            "next_evolution": {},
+        }
+
+    if pokemon.previous_evolution:
+        pokemon_card["previous_evolution"] = {
+                "title_ru": pokemon.previous_evolution.title,
+                "pokemon_id": pokemon.previous_evolution.id,
+                "img_url": request.build_absolute_uri(
+                    pokemon.previous_evolution.image.url
+                )
+        }
+
 
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon_card
