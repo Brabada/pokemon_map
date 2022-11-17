@@ -3,6 +3,11 @@ from django.db import models  # noqa F401
 
 # your models here
 
+class PokemonElementType(models.Model):
+    title = models.CharField(max_length=200, null=True)
+
+    def __str__(self):
+        return self.title
 
 class Pokemon(models.Model):
     title = models.CharField(max_length=200, verbose_name="Название")
@@ -21,6 +26,10 @@ class Pokemon(models.Model):
                                            on_delete=models.SET_NULL,
                                            related_name='next_evolutions',
                                            verbose_name="Предыдущая эволюция")
+    element_type = models.ManyToManyField(PokemonElementType,
+                                          blank=True,
+                                          related_name="element_type_pokemons",
+                                          verbose_name="Element type")
 
     def __str__(self):
         return self.title
@@ -54,3 +63,5 @@ class PokemonEntity(models.Model):
 
     def __str__(self):
         return f"{self.pokemon.title} {self.lat} {self.lon}"
+
+
