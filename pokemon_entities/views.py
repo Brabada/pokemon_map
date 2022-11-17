@@ -14,15 +14,24 @@ DEFAULT_IMAGE_URL = (
 )
 
 
-def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
+def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL,
+                pokemon_stats=None):
+    if pokemon_stats is None:
+        pokemon_stats = {}
     icon = folium.features.CustomIcon(
         image_url,
         icon_size=(50, 50),
     )
+    popup_text = f"<b>Location</b>: {lat}, {lon}<hr>"
+    for stat, value in pokemon_stats.items():
+        popup_text = f"{popup_text}{stat}: {value}<br>"
+    folium.Popup(popup_text, max_width='100')
+
     folium.Marker(
         [lat, lon],
         # Warning! `tooltip` attribute is disabled intentionally
         # to fix strange folium cyrillic encoding bug
+        popup=popup_text,
         icon=icon,
     ).add_to(folium_map)
 
@@ -40,7 +49,14 @@ def show_all_pokemons(request):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+            request.build_absolute_uri(pokemon_entity.pokemon.image.url),
+            pokemon_stats={
+                "Level": pokemon_entity.level,
+                "Health": pokemon_entity.health,
+                "Strength": pokemon_entity.strength,
+                "Defence": pokemon_entity.defence,
+                "Stamina": pokemon_entity.stamina
+            }
         )
 
     pokemons = PokemonEntity.objects.filter(
@@ -77,7 +93,14 @@ def show_pokemon(request, pokemon_id):
         add_pokemon(
             folium_map, pokemon_entity.lat,
             pokemon_entity.lon,
-            request.build_absolute_uri(pokemon_entity.pokemon.image.url)
+            request.build_absolute_uri(pokemon_entity.pokemon.image.url),
+            pokemon_stats={
+                "Level": pokemon_entity.level,
+                "Health": pokemon_entity.health,
+                "Strength": pokemon_entity.strength,
+                "Defence": pokemon_entity.defence,
+                "Stamina": pokemon_entity.stamina
+            }
         )
 
     pokemon_card = {
