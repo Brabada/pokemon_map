@@ -59,19 +59,16 @@ def show_all_pokemons(request):
             }
         )
 
-    pokemons = PokemonEntity.objects.filter(
-        appeared_at__lte=localtime_now,
-        disappeared_at__gte=localtime_now
-    ).values("pokemon__id", "pokemon__title", "pokemon__image").distinct()
-
+    pokemons = Pokemon.objects.all()
     pokemons_on_page = []
     for pokemon in pokemons:
-        pokemons_on_page.append({
-            'pokemon_id': pokemon["pokemon__id"],
-            'img_url': request.build_absolute_uri(
-                f'media/{pokemon["pokemon__image"]}'
-            ),
-            'title_ru': pokemon["pokemon__title"]})
+        pokemons_on_page.append(
+            {
+                'pokemon_id': pokemon.id,
+                'img_url': request.build_absolute_uri(pokemon.image.url),
+                'title_ru': pokemon.title,
+            }
+        )
 
     return render(request, 'mainpage.html', context={
         'map': folium_map._repr_html_(),
