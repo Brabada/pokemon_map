@@ -9,6 +9,7 @@ class PokemonElementType(models.Model):
     def __str__(self):
         return self.title
 
+
 class Pokemon(models.Model):
     title = models.CharField(max_length=200, verbose_name="Название")
     title_en = models.CharField(max_length=200,
@@ -28,7 +29,7 @@ class Pokemon(models.Model):
                                            verbose_name="Предыдущая эволюция")
     element_type = models.ManyToManyField(PokemonElementType,
                                           blank=True,
-                                          related_name="element_type_pokemons",
+                                          related_name="pokemons",
                                           verbose_name="Element type")
 
     def __str__(self):
@@ -38,7 +39,7 @@ class Pokemon(models.Model):
 class PokemonEntity(models.Model):
     pokemon = models.ForeignKey(Pokemon,
                                 on_delete=models.CASCADE,
-                                related_name='pokemon_entities',
+                                related_name='entities',
                                 verbose_name="Покемон")
     lat = models.FloatField(verbose_name="Широта")
     lon = models.FloatField(verbose_name="Долгота")
@@ -63,5 +64,4 @@ class PokemonEntity(models.Model):
 
     def __str__(self):
         return f"{self.pokemon.title} {self.lat} {self.lon}"
-
 
