@@ -100,6 +100,14 @@ def show_pokemon(request, pokemon_id):
                 "Stamina": pokemon_entity.stamina
             }
         )
+    elements_type = []
+    for element_type in pokemon.element_type.all():
+        elements_type.append({
+            'title': element_type.title,
+            'img': request.build_absolute_uri(element_type.image.url),
+            'strong_against': [element for element in
+                               element_type.strong_against.all()]
+        })
 
     pokemon_card = {
             "pokemon_id": pokemon.id,
@@ -108,6 +116,7 @@ def show_pokemon(request, pokemon_id):
             "title_jp": pokemon.title_jp,
             "description": pokemon.description,
             "img_url": request.build_absolute_uri(pokemon.image.url),
+            "element_type": elements_type,
         }
 
     next_evolutions = pokemon.next_evolutions.all()
