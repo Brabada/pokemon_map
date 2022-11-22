@@ -5,6 +5,13 @@ from django.db import models  # noqa F401
 
 class PokemonElementType(models.Model):
     title = models.CharField(max_length=200, null=True)
+    image = models.ImageField(blank=True, null=True,
+                              verbose_name="Изображение")
+    strong_against = models.ManyToManyField("self", symmetrical=False,
+                                            blank=True, null=True,
+                                            verbose_name="Strong against "
+                                                         "elements",
+                                            related_name="weak_against")
 
     def __str__(self):
         return self.title
